@@ -1,29 +1,79 @@
 import React, { Component } from 'react';
 import Navbar from './components/layout/Navbar';
 import Users from './components/users/Users';
+import Search from './components/users/Search';
+import Alert from './components/layout/Alert';
 import axios from 'axios';
 import './App.css';
 
 
 
 class App extends Component {
-  async componentDidMount() {
-    const res = await axios.get('https://api.github.com/users');
 
-    console.log(res.data);
+  state = {
+    users: [],
+    loading: false,
+    alert: null
+  };
+
+
+  // async componentDidMount() {
+  //   this.setState({ loading: true });
+
+  //   const res = await axios.get(`https://api.github.com/users?client_id=
+  //   ${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=
+  //   ${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+
+  //   this.setState({ users: res.data, loading: false });
+  // }
+
+
+  // setUsers function from Search.js
+  // Search Github users
+  searchUsers = async text => {
+    // console.log(text);
+    this.setState({ loading: true });
+
+    const res = await axios.get(`https://api.github.com/search/users?q=${text}&client_id=
+    ${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=
+    ${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+
+    // console.log(res);
+  
+    this.setState({ users: res.data.items, loading: false });
+
+    // console.log(this.state.users);
+  };
+
+  // Clear users from state
+  // Props from Search.js
+  clearUsers = () => this.setState({ users: [], loading: false });
+
+  // Set Alert. Prop passed up from Search.js
+  setAlert = (msg, type) => {
+    this.setState({ alert: {msg, type}});
+
+    setTimeout(() => this.setState({ alert: null}), 5000);
   }
 
-
   render(){
+    const { users, loading } = this.state;
     return (
       <div className="App">
         <Navbar />
         <div className="container">
-          <Users />
+          <Alert alert={this.state.alert} />
+          <Search 
+            searchUsers={this.searchUsers} 
+            clearUsers={this.clearUsers} 
+            showClearBtn={ this.state.users.length > 0 ? true : false } 
+            setAlert={this.setAlert}
+          />
+          <Users loading={loading} users={users} />
         </div>
       </div>
     );
-  }
-}
+  };
+};
 
 export default App;
