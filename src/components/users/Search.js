@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-export class Search extends Component {
+class Search extends Component {
     state = {
         text: ''
     };
@@ -46,7 +46,7 @@ export class Search extends Component {
                     />
                     <input type="submit" value="Search" className="btn btn-dark btn-block" />
                 </form>
-                {/* if showClearbtn is set to true ie if there are users displayed  */}
+                {/*show button if showClearbtn is set to true ie if there are users displayed  */}
                 {showClearBtn && (<button className="btn btn-light btn-block" onClick={clearUsers}> Clear </button>) }
                 
             </div>
